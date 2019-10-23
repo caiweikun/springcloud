@@ -1,10 +1,8 @@
 # springcloud
-<div style="line-high:15px;">
-<p style="line-high:15px;">工程 actuator</p>
+<p>工程 actuator</p>
 <p>1.引入运行状态监控</p>
 <p>2.多profiles 配置</p>
 <p>3.整合Swagger2</p>
 <p>4.整合Jpa</p>
 <p>5.整合Redis</p>
-</div>
-
+<hr>
