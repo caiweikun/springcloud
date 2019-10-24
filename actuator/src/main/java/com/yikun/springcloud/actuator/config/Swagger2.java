@@ -27,7 +27,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
  * @ApiParamlmplicit ： 一个请求参数。
  * @ApiParamsimplicit ： 多个请求参数。
  *
- * 启动服务，浏览器访问： http://localhost:8080/swagger-ui.html 查看在线API
+ * 启动服务，浏览器访问： http://localhost:端口/工程上下文/swagger-ui.html 查看在线API
  */
 @Configuration
 @EnableSwagger2

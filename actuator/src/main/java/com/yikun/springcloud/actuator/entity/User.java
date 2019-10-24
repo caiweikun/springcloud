@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity()
 // 定义映射的表
@@ -12,7 +13,7 @@ import javax.persistence.*;
 // get set function
 @Getter
 @Setter
-public class User {
+public class User implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,5 +28,12 @@ public class User {
 	public User() {
 	}
 
-
+	@Override
+	public String toString() {
+		return "User{" +
+				"id=" + id +
+				", userName='" + userName + '\'' +
+				", password='" + password + '\'' +
+				'}';
+	}
 }
