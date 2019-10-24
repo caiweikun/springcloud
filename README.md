@@ -5,4 +5,5 @@
 <p>3.整合Swagger2</p>
 <p>4.整合Jpa</p>
 <p>5.整合Redis</p>
+<p>6.整合RabbitMQ</p>
 <hr>
