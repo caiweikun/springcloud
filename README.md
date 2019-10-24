@@ -7,3 +7,8 @@
 <p>5.整合Redis</p>
 <p>6.整合RabbitMQ</p>
 <hr>
+<h3>工程eureka</h3>
+<p>1.服务治理注册中心 Eureka Server</p>
+<p>2.服务客户端 Eureka Client</p>
+<p>3.构建高可用的 Eureka Server 集群</p>
+<hr>
