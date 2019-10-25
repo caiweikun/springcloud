@@ -19,4 +19,6 @@
 <p>4.服务客消费者 Eureka Feign Client（声明式接口调用）</p>
 <p>5.在 RestTemplate 和 Ribbon 上使用熔断器 Hystrix</p>
 <p>6.在 Feign 上使用熔断器 Hystrix</p>
+<p>7.使用 Hystrix Dashboard 监控熔断器的状态</p>
+<p>8.使用 Turbine 聚合监控</p>
 <hr>
