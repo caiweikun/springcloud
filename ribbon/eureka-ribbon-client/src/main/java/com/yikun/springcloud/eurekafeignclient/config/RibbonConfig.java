@@ -1,4 +1,4 @@
-package com.yikun.springcloud.eurekaribbonclient.config;
+package com.yikun.springcloud.eurekafeignclient.config;
 
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;

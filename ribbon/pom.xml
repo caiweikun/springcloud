@@ -18,6 +18,8 @@
         <module>eureka-client</module>
         <module>eureka-server</module>
         <module>eureka-ribbon-client</module>
+        <module>eureka-feign-client</module>
+        <module>eureka-monitor-client</module>
     </modules>
 
     <properties>

@@ -1,5 +1,7 @@
-package com.yikun.springcloud.eurekaribbonclient.controller;
+package com.yikun.springcloud.eurekafeignclient.controller;
 
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCollapser;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
@@ -11,7 +13,6 @@ import org.springframework.web.client.RestTemplate;
 @RestController
 public class RibbonController {
 
-
     @Autowired
     private RestTemplate restTemplate;
 
@@ -22,8 +23,18 @@ public class RibbonController {
      * @return
      */
     @GetMapping("/hello")
+    @HystrixCommand(fallbackMethod = "helloError")
     public String hello(@RequestParam(required = false, defaultValue = "jenny") String name){
         return restTemplate.getForObject("http://eureka-client/hello?name="+name, String.class);
+    }
+
+    /**
+     * 如果调用失败，则执行 fallbackMethod 的逻辑
+     * @param name
+     * @return
+     */
+    private String helloError(String name){
+        return "hello ,"+name+" ,sorry,error!";
     }
 
     @Autowired
