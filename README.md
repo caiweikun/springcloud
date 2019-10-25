@@ -21,4 +21,5 @@
 <p>6.在 Feign 上使用熔断器 Hystrix</p>
 <p>7.使用 Hystrix Dashboard 监控熔断器的状态</p>
 <p>8.使用 Turbine 聚合监控</p>
+<p>9.路由网关 Zuul，配置熔断器，自定义过滤器</p>
 <hr>
