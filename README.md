@@ -22,4 +22,8 @@
 <p>7.使用 Hystrix Dashboard 监控熔断器的状态</p>
 <p>8.使用 Turbine 聚合监控</p>
 <p>9.路由网关 Zuul，配置熔断器，自定义过滤器</p>
+<p>10.配置中心 Spring Cloud Config</p>
+<p>11.Config Server 从本地读取配置文件</p>
+<p>12.Config Server 从远程Git 仓库读取配置文件</p>
+<p>13.使用 Spring Cloud Bus 刷新配置</p>
 <hr>
