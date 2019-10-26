@@ -20,7 +20,7 @@
 <p>5.在 RestTemplate 和 Ribbon 上使用熔断器 Hystrix</p>
 <p>6.在 Feign 上使用熔断器 Hystrix</p>
 <p>7.使用 Hystrix Dashboard 监控熔断器的状态</p>
-<p>8.使用 Turbine 聚合监控</p>
+<p>8.使用 Turbine 聚合监控 Hystrix Dashboard</p>
 <p>9.路由网关 Zuul，配置熔断器，自定义过滤器</p>
 <p>10.配置中心 Spring Cloud Config</p>
 <p>11.Config Server 从本地读取配置文件</p>
