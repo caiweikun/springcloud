@@ -12,8 +12,8 @@ import org.springframework.cloud.netflix.turbine.EnableTurbine;
  *
  * 需要引入起步依赖 hystrix-dashboard  turbine  actuator
  *
- * 数据流 http://localhost:port/turbine.stream
- * 仪表盘界面 http://localhost:port/hystrix
+ * 数据流 http://localhost:port/turbine.stream 看配置 http://localhost:port/actuator/turbine.stream
+ * 仪表盘界面 http://localhost:port/hystrix  http://localhost:port/actuator/hystrix
  */
 @EnableTurbine
 @EnableEurekaClient
