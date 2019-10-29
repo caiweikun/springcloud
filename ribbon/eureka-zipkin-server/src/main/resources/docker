@@ -1,0 +1,170 @@
+
+
+Docker 是一个开源的应用容器引擎，基于 Go 语言 并遵从 Apache2.0 协议开源。
+Docker 可以让开发者打包他们的应用以及依赖包到一个轻量级、可移植的容器中，然后发布到任何流行的 Linux 机器上，也可以实现虚拟化。
+容器是完全使用沙箱机制，相互之间不会有任何接口（类似 iPhone 的 app）,更重要的是容器性能开销极低。
+
+
+Docker的应用场景
+Web 应用的自动化打包和发布。
+自动化测试和持续集成、发布。
+在服务型环境中部署和调整数据库或其他的后台应用。
+从头编译或者扩展现有的 OpenShift 或 Cloud Foundry 平台来搭建自己的 PaaS 环境。
+
+Docker 包括三个基本概念:
+镜像（Image）：Docker 镜像（Image），就相当于是一个 root 文件系统。比如官方镜像 ubuntu:16.04 就包含了完整的一套 Ubuntu16.04 最小系统的 root 文件系统。
+容器（Container）：镜像（Image）和容器（Container）的关系，就像是面向对象程序设计中的类和实例一样，镜像是静态的定义，容器是镜像运行时的实体。容器可以被创建、启动、停止、删除、暂停等。
+仓库（Repository）：仓库可看着一个代码控制中心，用来保存镜像。
+
+
+MacOS Docker 安装
+使用 Homebrew 安装
+macOS 我们可以使用 Homebrew 来安装 Docker。
+
+Homebrew 的 Cask 已经支持 Docker for Mac，因此可以很方便的使用 Homebrew Cask 来进行安装：
+
+$ brew cask install docker
+
+==> Creating Caskroom at /usr/local/Caskroom
+==> We'll set permissions properly so we won't need sudo in the future
+Password:          # 输入 macOS 密码
+==> Satisfying dependencies
+==> Downloading https://download.docker.com/mac/stable/21090/Docker.dmg
+######################################################################## 100.0%
+==> Verifying checksum for Cask docker
+==> Installing Cask docker
+==> Moving App 'Docker.app' to '/Applications/Docker.app'.
+&#x1f37a;  docker was successfully installed!
+在载入 Docker app 后，点击 Next，可能会询问你的 macOS 登陆密码，你输入即可。之后会弹出一个 Docker 运行的提示窗口，状态栏上也有有个小鲸鱼的图标（）。
+
+默认安装 在 /usr/local/Caskroom/docker
+
+
+--------------------
+
+https://docs.docker.com/docker-for-mac/
+
+
+下载镜像
+docker images
+docker ps
+docker info
+docker version
+
+获取一个新的镜像
+当我们在本地主机上使用一个不存在的镜像时 Docker 就会自动下载这个镜像。如果我们想预先下载这个镜像，我们可以使用 docker pull 命令来下载它。
+Crunoob@runoob:~$ docker pull ubuntu:13.10
+13.10: Pulling from library/ubuntu
+6599cadaf950: Pull complete
+23eda618d451: Pull complete
+f0be3084efe9: Pull complete
+52de432f084b: Pull complete
+a3ed95caeb02: Pull complete
+Digest: sha256:15b79a6654811c8d992ebacdfbd5152fcf3d165e374e264076aa435214a947a3
+Status: Downloaded newer image for ubuntu:13.10
+
+查找镜像
+我们可以从 Docker Hub 网站来搜索镜像，Docker Hub 网址为： https://hub.docker.com/
+我们也可以使用 docker search 命令来搜索镜像。比如我们需要一个httpd的镜像来作为我们的web服务。我们可以通过 docker search 命令搜索 httpd 来寻找适合我们的镜像。
+runoob@runoob:~$  docker search httpd
+
+拖取镜像
+我们决定使用上图中的httpd 官方版本的镜像，使用命令 docker pull 来下载镜像。
+runoob@runoob:~$ docker pull httpd
+Using default tag: latest
+latest: Pulling from library/httpd
+8b87079b7a06: Pulling fs layer
+a3ed95caeb02: Download complete
+0d62ec9c6a76: Download complete
+a329d50397b9: Download complete
+ea7c1f032b5c: Waiting
+be44112b72c7: Waiting
+下载完成后，我们就可以使用这个镜像了。
+runoob@runoob:~$ docker run httpd
+
+
+------------------------------
+
+
+使用docker 启动 zipkin 服务端
+
+docker run -d -p 9411:9411 openzipkin/zipkin
+
+docker run -d -p 9411:5011 openzipkin/zipkin  // 将容器的 9411 端口 映射到本级的 5011 端口
+
+我们可以通过运行 exit 命令或者使用 CTRL+D 来退出容器。
+
+root@0123ce188bd8:/#  exit
+exit
+root@runoob:~#
+注意第三行中 root@runoob:~# 表明我们已经退出了当期的容器，返回到当前的主机中。
+
+runoob@runoob:~$ docker ps
+CONTAINER ID        IMAGE                  COMMAND              ...
+5917eac21c36        ubuntu:15.10           "/bin/sh -c 'while t…"    ...\
+
+输出详情介绍：
+
+CONTAINER ID: 容器 ID。
+
+IMAGE: 使用的镜像。
+
+COMMAND: 启动容器时运行的命令。
+
+CREATED: 容器的创建时间。
+
+STATUS: 容器状态。
+
+状态有7种：
+
+created（已创建）
+restarting（重启中）
+running（运行中）
+removing（迁移中）
+paused（暂停）
+exited（停止）
+dead（死亡）
+PORTS: 容器的端口信息和使用的连接类型（tcp\udp）。
+
+NAMES: 自动分配的容器名称。
+
+在容器内使用 docker logs 命令，查看容器内的标准输出：
+
+runoob@runoob:~$ docker logs 2b1b7a428627
+runoob@runoob:~$ docker logs amazing_cori
+
+也可以用下面的命令来停止:
+
+runoob@runoob:~$ docker stop amazing_cori
+
+runoob@runoob:~$ docker port bf08b7f2cd89
+5000/tcp -> 0.0.0.0:5000
+runoob@runoob:~$ docker port wizardly_chandrasekhar
+5000/tcp -> 0.0.0.0:5000
+
+查看 WEB 应用程序日志
+docker logs [ID或者名字] 可以查看容器内部的标准输出。
+
+runoob@runoob:~$ docker logs -f bf08b7f2cd89
+ * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
+192.168.239.1 - - [09/May/2016 16:30:37] "GET / HTTP/1.1" 200 -
+192.168.239.1 - - [09/May/2016 16:30:37] "GET /favicon.ico HTTP/1.1" 404 -
+
+
+停止 WEB 应用容器
+runoob@runoob:~$ docker stop wizardly_chandrasekhar
+wizardly_chandrasekhar
+重启WEB应用容器
+已经停止的容器，我们可以使用命令 docker start 来启动。
+
+runoob@runoob:~$ docker start wizardly_chandrasekhar
+wizardly_chandrasekhar
+
+正在运行的容器，我们可以使用 docker restart 命令来重启。
+
+移除WEB应用容器
+我们可以使用 docker rm 命令来删除不需要的容器
+
+runoob@runoob:~$ docker rm wizardly_chandrasekhar
+wizardly_chandrasekhar
+删除容器时，容器必须是停止状态，否则会报如下错误

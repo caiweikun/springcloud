@@ -1,0 +1,111 @@
+
+中文参考文档
+https://es.xiaoleilu.com
+
+Elasticsearch是一个基于Apache Lucene(TM)的开源搜索引擎。无论在开源还是专有领域，Lucene可以被认为是迄今为止最先进、性能最好的、功能最全的搜索引擎库。
+但是，Lucene只是一个库。想要使用它，你必须使用Java来作为开发语言并将其直接集成到你的应用中，更糟糕的是，Lucene非常复杂，你需要深入了解检索的相关知识来理解它是如何工作的。
+Elasticsearch也使用Java开发并使用Lucene作为其核心来实现所有索引和搜索的功能，但是它的目的是通过简单的RESTful API来隐藏Lucene的复杂性，从而让全文搜索变得简单。
+
+-------------------------------
+
+下载
+https://www.elastic.co/cn/downloads/elasticsearch
+我选择是 Mac版本
+
+也可以用 Homebrew
+https://www.elastic.co/guide/en/elasticsearch/reference/7.4/brew.html#brew-layout
+
+To install with Homebrew, you first need to tap the Elastic Homebrew repository:
+
+brew tap elastic/tap
+
+Once you’ve tapped the Elastic Homebrew repo, you can use brew install to install the default distribution of Elasticsearch:
+
+brew install elastic/tap/elasticsearch-full
+
+home
+/usr/local/var/homebrew/linked/elasticsearch-full
+
+bin
+/usr/local/var/homebrew/linked/elasticsearch-full/bin
+
+conf
+/usr/local/etc/elasticsearch
+
+data
+/usr/local/var/lib/elasticsearch
+
+logs
+/usr/local/var/log/elasticsearch
+
+plugins
+/usr/local/var/homebrew/linked/elasticsearch/plugins
+
+------------------------------
+
+更新brew
+brew update
+
+安装java8
+brew cask install homebrew/cask-versions/java8
+运行es必须安装java
+
+安装es
+brew install elasticsearch
+你也可以先 brew search elasticsearch
+
+运行es
+brew services start elasticsearch
+查看安装信息执行 brew info elasticsearch
+
+本地浏览器访问http://localhost:9200
+
+-------------------
+
+安装Kibana
+
+Kibana是ES的一个配套工具，可以让用户在网页中与ES进行交互
+
+brew install kibana
+
+启动Kibana
+brew services start kibana
+
+本地浏览器访问
+http://localhost:5601
+
+-----------------------------
+
+打开另一个终端进行测试：
+curl 'http://localhost:9200/?pretty'
+
+调用shutdown API来关闭：
+curl -XPOST 'http://localhost:9200/_shutdown'
+
+向Elasticsearch发出的请求的组成部分与其它普通的HTTP请求是一样的：
+curl -X<VERB> '<PROTOCOL>://<HOST>:<PORT>/<PATH>?<QUERY_STRING>' -d '<BODY>'
+VERB HTTP方法：GET, POST, PUT, HEAD, DELETE
+PROTOCOL http或者https协议（只有在Elasticsearch前面有https代理的时候可用）
+HOST Elasticsearch集群中的任何一个节点的主机名，如果是在本地的节点，那么就叫localhost
+PORT Elasticsearch HTTP服务所在的端口，默认为9200
+PATH API路径（例如_count将返回集群中文档的数量），PATH可以包含多个组件，例如_cluster/stats或者_nodes/stats/jvm
+QUERY_STRING 一些可选的查询请求参数，例如?pretty参数将使请求返回更加美观易读的JSON数据
+BODY 一个JSON格式的请求主体（如果请求需要的话）
+
+举例说明，为了计算集群中的文档数量，我们可以这样做：
+curl -XGET 'http://localhost:9200/_count?pretty' -d '
+{
+    "query": {
+        "match_all": {}
+    }
+}
+'
+
+-------------------
+
+在Elasticsearch中，文档归属于一种类型(type),而这些类型存在于索引(index)中，我们可以画一些简单的对比图来类比传统关系型数据库：
+Relational DB -> Databases -> Tables -> Rows -> Columns
+Elasticsearch -> Indices   -> Types  -> Documents -> Fields
+Elasticsearch集群可以包含多个索引(indices)（数据库），每一个索引可以包含多个类型(types)（表），每一个类型包含多个文档(documents)（行），然后每个文档包含多个字段(Fields)（列）。
+
+

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
  * 如果你还没有安装过brew,那么请使用一下指令安装下这个mac平台里十分好用的包管理器
  * /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
  * 更新brew资源  brew update
+ *
  * 执行安装  brew install rabbitmq
  * RabbitMQ安装后的路径为：/usr/local/Cellar/rabbitmq/3.8.0 (版本根据安装版本确定)
  * 切换到MQ目录,注意你的安装版本可能不是3.8.0
