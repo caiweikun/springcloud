@@ -16,8 +16,12 @@ Docker 包括三个基本概念:
 容器（Container）：镜像（Image）和容器（Container）的关系，就像是面向对象程序设计中的类和实例一样，镜像是静态的定义，容器是镜像运行时的实体。容器可以被创建、启动、停止、删除、暂停等。
 仓库（Repository）：仓库可看着一个代码控制中心，用来保存镜像。
 
+--------------------------------------------------------------------------------
+
+https://docs.docker.com/docker-for-mac/
 
 MacOS Docker 安装
+
 使用 Homebrew 安装
 macOS 我们可以使用 Homebrew 来安装 Docker。
 
@@ -40,12 +44,8 @@ Password:          # 输入 macOS 密码
 默认安装 在 /usr/local/Caskroom/docker
 
 
---------------------
+--------------------------------------------------------------------------------
 
-https://docs.docker.com/docker-for-mac/
-
-
-下载镜像
 docker images
 docker ps
 docker info
@@ -83,7 +83,7 @@ be44112b72c7: Waiting
 runoob@runoob:~$ docker run httpd
 
 
-------------------------------
+------------------------------------------------------------------------------------------
 
 
 使用docker 启动 zipkin 服务端

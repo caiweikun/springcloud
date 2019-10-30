@@ -4,7 +4,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 
-
 /**
  * Spring Cloud Sleuth
  * 微服务架构是一个分布式架构，一个请求可能需要调用很多个服务，而内部服务的调用复杂度决定了问题难以定位。所以必须实现分布式链路追踪
@@ -34,7 +33,7 @@ import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
  *
  * 本演示实例 Zipkin 链路追踪组件
  * 在Spring Boot 2.0之前，我们需要 新建 eureka-zipkin-server 工程 作为链路追踪服务中心，负责存储链路数据。
- * Spring Boot 2.0之后，使用EnableZipkinServer创建自定义的zipkin服务器已经被废弃，将无法启动
+ * Spring Boot 2.0之后，使用EnableZipkinServer创建自定义的zipkin服务器已经被废弃，将无法启动 !!!
  * 我们介绍 官网 给我们介绍的启动方式
  *
  * 查看官网 https://zipkin.io/pages/quickstart.html 提供了三种启动方式
@@ -56,6 +55,7 @@ import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
  * 使用 RabbitMQ 传输链路数据
  * zipkin 默认是通过http 上传，可以用 RabbitMQ 来传输链路数据
  * https://github.com/openzipkin/zipkin/tree/master/zipkin-collector/rabbitmq
+ *
  * 添加依赖 spring-cloud-stream-binder-rabbit 包含了 spring-boot-starter-amqp
  * The RabbitMQ collector will be enabled when the addresses or uri for the RabbitMQ server(s) is set.
  * Example usage:
@@ -89,6 +89,7 @@ import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
  * 或者 java -jar zipkin.jar --zipkin.collector.rabbitmq.addresses=127.0.0.1:5672  （其他默认）
  *
  * ************************************
+ *
  * 在 mysql 数据库中存储链路数据
  * zipkin 的链路数据默认 是存储在内存中的 ，在实际生产中，我们需要做持久化
  * 官网上的说明 https://github.com/openzipkin/zipkin/tree/master/zipkin-storage/mysql-v1
@@ -108,14 +109,57 @@ import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
  * 导入数据库脚本 https://github.com/openzipkin/zipkin/blob/master/zipkin-storage/mysql-v1/src/main/resources/mysql.sql
  *
  * java -jar zipkin.jar --STORAGE_TYPE=mysql --MYSQL_DB=zipkin --MYSQL_USER=root --MYSQL_PASS=123456 --MYSQL_HOST=localhost --MYSQL_TCP_PORT=3306
- * java -jar zipkin.jar --STORAGE_TYPE=mysql --MYSQL_DB=zipkin --MYSQL_USER=root --MYSQL_PASS=123456 --MYSQL_HOST=localhost --MYSQL_TCP_PORT=3306 --zipkin.collector.rabbitmq.addresses=127.0.0.1:5672
- *  或者 java -jar zipkin.jar --STORAGE_TYPE=mysql --MYSQL_USER=root --MYSQL_PASS=123456 --MYSQL_JDBC_URL=jdbc:mysql://localhost:3306/zipkin?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&useSSL=false&zeroDateTimeBehavior=convertToNull
+ * 带mq的启动方式 java -jar zipkin.jar --STORAGE_TYPE=mysql --MYSQL_DB=zipkin --MYSQL_USER=root --MYSQL_PASS=123456 --MYSQL_HOST=localhost --MYSQL_TCP_PORT=3306 --zipkin.collector.rabbitmq.addresses=127.0.0.1:5672
+ *
+ * 或者 java -jar zipkin.jar --STORAGE_TYPE=mysql --MYSQL_USER=root --MYSQL_PASS=123456 --MYSQL_JDBC_URL=jdbc:mysql://localhost:3306/zipkin?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&useSSL=false&zeroDateTimeBehavior=convertToNull
  * docker镜像启动实例 参考 docker run -d -p 9411:9411 -e STORAGE_TYPE=mysql -e MYSQL_HOST=localhost -e MYSQL_TCP_PORT=1320 -e MYSQL_DB=db_zipkin -e MYSQL_USER=root -e MYSQL_PASS=1HJRTUy0eVn8O2lo -e zipkin.collector.rabbitmq.addresses=localhost:5672 -e zipkin.collector.rabbitmq.username=root -e zipkin.collector.rabbitmq.password=1qaz2wsx  openzipkin/zipkin
  *
  * *************************************
  * 使用 ElasticSearch 存储链路数据
+ * https://github.com/openzipkin/zipkin/tree/master/zipkin-server
  *
+ * Zipkin's Elasticsearch storage component supports versions 5-7.x and applies when STORAGE_TYPE is set to elasticsearch
+ * The following apply when STORAGE_TYPE is set to elasticsearch:
+ * * `ES_HOSTS`: A comma separated list of elasticsearch base urls to connect to ex. http://host:9200.
+ *               Defaults to "http://localhost:9200".
+ * * `ES_PIPELINE`: Indicates the ingest pipeline used before spans are indexed. No default.
+ * * `ES_TIMEOUT`: Controls the connect, read and write socket timeouts (in milliseconds) for
+ *                 Elasticsearch Api. Defaults to 10000 (10 seconds)
+ * * `ES_INDEX`: The index prefix to use when generating daily index names. Defaults to zipkin.
+ * * `ES_DATE_SEPARATOR`: The date separator to use when generating daily index names. Defaults to '-'.
+ * * `ES_INDEX_SHARDS`: The number of shards to split the index into. Each shard and its replicas
+ *                      are assigned to a machine in the cluster. Increasing the number of shards
+ *                      and machines in the cluster will improve read and write performance. Number
+ *                      of shards cannot be changed for existing indices, but new daily indices
+ *                      will pick up changes to the setting. Defaults to 5.
+ * * `ES_INDEX_REPLICAS`: The number of replica copies of each shard in the index. Each shard and
+ *                        its replicas are assigned to a machine in the cluster. Increasing the
+ *                        number of replicas and machines in the cluster will improve read
+ *                        performance, but not write performance. Number of replicas can be changed
+ *                        for existing indices. Defaults to 1. It is highly discouraged to set this
+ *                        to 0 as it would mean a machine failure results in data loss.
+ * * `ES_USERNAME` and `ES_PASSWORD`: Elasticsearch basic authentication, which defaults to empty string.
+ *                                    Use when X-Pack security (formerly Shield) is in place.
+ * * `ES_HTTP_LOGGING`: When set, controls the volume of HTTP logging of the Elasticsearch Api.
+ *                      Options are BASIC, HEADERS, BODY
+ * Example usage:
+ * To connect normally:
+ * $ STORAGE_TYPE=elasticsearch ES_HOSTS=http://myhost:9200 java -jar zipkin.jar
+ * To log Elasticsearch api requests:
+ * $ STORAGE_TYPE=elasticsearch ES_HTTP_LOGGING=BASIC java -jar zipkin.jar
  *
+ * 关闭 zipkin
+ * STORAGE_TYPE=elasticsearch ES_HOSTS=http://localhost:9200 java -jar zipkin.jar
+ * 带mq的启动方式 java -jar zipkin.jar --STORAGE_TYPE=elasticsearch --ES_HOSTS=http://localhost:9200 --zipkin.collector.rabbitmq.addresses=127.0.0.1:5672
+ *
+ * 我们可以查看elasticsearch 中是否有索引： GET _cat/indices
+ * **************************************
+ *
+ * 使用 Kibana 展示链路数据（Kibana 下载和安装参考文档）
+ * ElasticSearch 可以和 Kibana 结合，将链路数据展示在Kibana ，安装完成 Kibana 后启动，Kibana默认会向本地端口为 9200的 ElasticSearch 读取数据
+ * Kibana 默认的端口为 5601，访问Kibana 的主页 http://localhost:5601
+ * 单击 "Managerment" 按钮，然后单击"Create index pattern" ，添加一个index。我们将 ElasticSearch中写入链路数据的index配置为 "zipkin*",
+ * 那么界面填写为 "zipkin-*"，就能找到对应的zipkin索引，单击"Create"。创建完成index后，单击"Discover"，就可以在界面上展示链路数据了。
  *
  */
 @SpringBootApplication

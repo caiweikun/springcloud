@@ -6,11 +6,11 @@ Elasticsearch是一个基于Apache Lucene(TM)的开源搜索引擎。无论在�
 但是，Lucene只是一个库。想要使用它，你必须使用Java来作为开发语言并将其直接集成到你的应用中，更糟糕的是，Lucene非常复杂，你需要深入了解检索的相关知识来理解它是如何工作的。
 Elasticsearch也使用Java开发并使用Lucene作为其核心来实现所有索引和搜索的功能，但是它的目的是通过简单的RESTful API来隐藏Lucene的复杂性，从而让全文搜索变得简单。
 
--------------------------------
+---------------------------------------------------------------------------------------------
 
-下载
 https://www.elastic.co/cn/downloads/elasticsearch
-我选择是 Mac版本
+
+下载，我选择是 Mac版本
 
 也可以用 Homebrew
 https://www.elastic.co/guide/en/elasticsearch/reference/7.4/brew.html#brew-layout
@@ -41,7 +41,7 @@ logs
 plugins
 /usr/local/var/homebrew/linked/elasticsearch/plugins
 
-------------------------------
+--------------------------------------------------------------------------------
 
 更新brew
 brew update
@@ -54,13 +54,32 @@ brew cask install homebrew/cask-versions/java8
 brew install elasticsearch
 你也可以先 brew search elasticsearch
 
+==> /usr/local/Cellar/elasticsearch/6.8.4/bin/elasticsearch-keystore create
+==> Caveats
+Data:    /usr/local/var/lib/elasticsearch/
+Logs:    /usr/local/var/log/elasticsearch/elasticsearch_caiweikun.log
+Plugins: /usr/local/var/elasticsearch/plugins/
+Config:  /usr/local/etc/elasticsearch/
+To have launchd start elasticsearch now and restart at login:
+  brew services start elasticsearch
+Or, if you don't want/need a background service you can just run:
+  elasticsearch
+==> Summary
+🍺  /usr/local/Cellar/elasticsearch/6.8.4: 133 files, 103.2MB, built in 27 minutes 55 seconds
+
 运行es
 brew services start elasticsearch
-查看安装信息执行 brew info elasticsearch
+查看安装信息执行
+brew info elasticsearch
 
-本地浏览器访问http://localhost:9200
+本地浏览器访问  http://localhost:9200
 
--------------------
+network.host: 192.168.31.107
+transport.tcp.port: 9300
+transport.tcp.compress: true
+http.port: 9100
+
+-----------------------------------------------------------------------------------------
 
 安装Kibana
 
@@ -68,13 +87,26 @@ Kibana是ES的一个配套工具，可以让用户在网页中与ES进行交互
 
 brew install kibana
 
+Config: /usr/local/etc/kibana/
+If you wish to preserve your plugins upon upgrade, make a copy of
+/usr/local/opt/kibana/plugins before upgrading, and copy it into the
+new keg location after upgrading.
+
+To have launchd start kibana now and restart at login:
+  brew services start kibana
+Or, if you don't want/need a background service you can just run:
+  kibana
+
+
 启动Kibana
 brew services start kibana
 
 本地浏览器访问
 http://localhost:5601
 
------------------------------
+---------------------------------------------------------------------------------
+
+elasticsearch 简单使用 和 简介
 
 打开另一个终端进行测试：
 curl 'http://localhost:9200/?pretty'
@@ -85,6 +117,7 @@ curl -XPOST 'http://localhost:9200/_shutdown'
 向Elasticsearch发出的请求的组成部分与其它普通的HTTP请求是一样的：
 curl -X<VERB> '<PROTOCOL>://<HOST>:<PORT>/<PATH>?<QUERY_STRING>' -d '<BODY>'
 VERB HTTP方法：GET, POST, PUT, HEAD, DELETE
+
 PROTOCOL http或者https协议（只有在Elasticsearch前面有https代理的时候可用）
 HOST Elasticsearch集群中的任何一个节点的主机名，如果是在本地的节点，那么就叫localhost
 PORT Elasticsearch HTTP服务所在的端口，默认为9200
@@ -101,11 +134,164 @@ curl -XGET 'http://localhost:9200/_count?pretty' -d '
 }
 '
 
--------------------
+curl -XGET 'http://localhost:9200/_count?pretty' -d '{"query": {"match_all": {}}}'
+
+-------------------------------------------------------------------------------
 
 在Elasticsearch中，文档归属于一种类型(type),而这些类型存在于索引(index)中，我们可以画一些简单的对比图来类比传统关系型数据库：
 Relational DB -> Databases -> Tables -> Rows -> Columns
 Elasticsearch -> Indices   -> Types  -> Documents -> Fields
 Elasticsearch集群可以包含多个索引(indices)（数据库），每一个索引可以包含多个类型(types)（表），每一个类型包含多个文档(documents)（行），然后每个文档包含多个字段(Fields)（列）。
+
+
+PUT /megacorp/employee/1
+{
+    "first_name" : "John",
+    "last_name" :  "Smith",
+    "age" :        25,
+    "about" :      "I love to go rock climbing",
+    "interests": [ "sports", "music" ]
+}
+
+检索文档
+GET /megacorp/employee/1
+GET /megacorp/employee/_search
+GET /megacorp/employee/_search?q=last_name:Smith
+
+使用DSL语句查询
+GET /megacorp/employee/_search
+{
+    "query" : {
+        "match" : {
+            "last_name" : "Smith"
+        }
+    }
+}
+
+更复杂的搜索
+GET /megacorp/employee/_search
+{
+    "query" : {
+        "filtered" : {
+            "filter" : {
+                "range" : {
+                    "age" : { "gt" : 30 } <1>
+                }
+            },
+            "query" : {
+                "match" : {
+                    "last_name" : "smith" <2>
+                }
+            }
+        }
+    }
+}
+
+全文搜索
+GET /megacorp/employee/_search
+{
+    "query" : {
+        "match" : {
+            "about" : "rock climbing"
+        }
+    }
+}
+
+高亮我们的搜索
+GET /megacorp/employee/_search
+{
+    "query" : {
+        "match_phrase" : {
+            "about" : "rock climbing"
+        }
+    },
+    "highlight": {
+        "fields" : {
+            "about" : {}
+        }
+    }
+}
+
+Elasticsearch有一个功能叫做聚合(aggregations)，它允许你在数据上生成复杂的分析统计。它很像SQL中的GROUP BY但是功能更强大。
+让我们统计每种兴趣下职员的平均年龄：
+GET /megacorp/employee/_search
+{
+    "aggs" : {
+        "all_interests" : {
+            "terms" : { "field" : "interests" },
+            "aggs" : {
+                "avg_age" : {
+                    "avg" : { "field" : "age" }
+                }
+            }
+        }
+    }
+}
+
+------------------------------------------------------------
+
+一个节点(node)就是一个Elasticsearch实例，而一个集群(cluster)由一个或多个节点组成，它们具有相同的cluster.name，它们协同工作，分享数据和负载。当加入新的节点或者删除一个节点时，集群就会感知到并平衡数据。
+集群中一个节点会被选举为主节点(master),它将临时管理集群级别的一些变更，例如新建或删除索引、增加或移除节点等。主节点不参与文档级别的变更或搜索，这意味着在流量增长的时候，该主节点不会成为集群的瓶颈。任何节点都可以成为主节点。我们例子中的集群只有一个节点，所以它会充当主节点的角色。
+
+集群健康
+在Elasticsearch集群中可以监控统计很多信息，但是只有一个是最重要的：集群健康(cluster health)。集群健康有三种状态：green、yellow或red。
+GET /_cluster/health
+curl -GET 'http://localhost:9200/_cluster/health'
+在一个没有索引的空集群中运行如上查询，将返回这些信息：
+{
+   "cluster_name":          "elasticsearch",
+   "status":                "green", <1>
+   "timed_out":             false,
+   "number_of_nodes":       1,
+   "number_of_data_nodes":  1,
+   "active_primary_shards": 0,
+   "active_shards":         0,
+   "relocating_shards":     0,
+   "initializing_shards":   0,
+   "unassigned_shards":     0
+}
+
+-------------------------------------------------------------
+
+为了将数据添加到Elasticsearch，我们需要索引(index)——一个存储关联数据的地方。实际上，索引只是一个用来指向一个或多个分片(shards)的“逻辑命名空间(logical namespace)”.
+一个分片(shard)是一个最小级别“工作单元(worker unit)”,它只是保存了索引中所有数据的一部分。
+分片是Elasticsearch在集群中分发数据的关键。把分片想象成数据的容器。文档存储在分片中，然后分片分配到你集群中的节点上。当你的集群扩容或缩小，Elasticsearch将会自动在你的节点间迁移分片，以使集群保持平衡。
+分片可以是主分片(primary shard)或者是复制分片(replica shard)。你索引中的每个文档属于一个单独的主分片，所以主分片的数量决定了索引最多能存储多少数据。
+理论上主分片能存储的数据大小是没有限制的，限制取决于你实际的使用情况。分片的最大容量完全取决于你的使用状况：硬件存储的大小、文档的大小和复杂度、如何索引和查询你的文档，以及你期望的响应时间。
+
+复制分片只是主分片的一个副本，它可以防止硬件故障导致的数据丢失，同时可以提供读请求，比如搜索或者从别的shard取回文档。
+当索引创建完成的时候，主分片的数量就固定了，但是复制分片的数量可以随时调整。
+
+-------------------------------------------------------------
+
+文档元数据
+一个文档不只有数据。它还包含了元数据(metadata)——关于文档的信息。三个必须的元数据节点是：
+节点	说明
+_index	文档存储的地方
+_type	文档代表的对象的类
+_id	文档的唯一标识
+
+_index
+索引(index)类似于关系型数据库里的“数据库”——它是我们存储和索引关联数据的地方。
+事实上，我们的数据被存储和索引在分片(shards)中，索引只是一个把一个或多个分片分组在一起的逻辑空间。然而，这只是一些内部细节——我们的程序完全不用关心分片。对于我们的程序而言，文档存储在索引(index)中。
+
+_type
+在应用中，我们使用对象表示一些“事物”，例如一个用户、一篇博客、一个评论，或者一封邮件。每个对象都属于一个类(class)，这个类定义了属性或与对象关联的数据。user类的对象可能包含姓名、性别、年龄和Email地址。
+
+_id
+id仅仅是一个字符串，它与_index和_type组合时，就可以在Elasticsearch中唯一标识一个文档。当创建一个文档，你可以自定义_id，也可以让Elasticsearch帮你自动生成。
+
+
+---------------------------------------
+
+
+让我们在集群中唯一一个空节点上创建一个叫做blogs的索引。默认情况下，一个索引被分配5个主分片，但是为了演示的目的，我们只分配3个主分片和一个复制分片（每个主分片都有一个复制分片）：
+curl -XPUT 'http://localhost:9200/blogs' -d '
+{
+   "settings" : {
+      "number_of_shards" : 3,
+      "number_of_replicas" : 1
+   }
+}'
 
 
