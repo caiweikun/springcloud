@@ -7,7 +7,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.io.Serializable;
 
-@Entity()
+@Entity
 // 定义映射的表
 @Table(name = "t_user")
 // get set function

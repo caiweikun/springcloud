@@ -3,6 +3,7 @@ package com.yikun.springcloud.actuator.dao;
 
 import com.yikun.springcloud.actuator.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 /**
  * use springcloud;
@@ -15,6 +16,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * insert into `springcloud`.`t_user` (`password`, `user_name`) VALUES ( '123456', 'test1');
  * select * from t_user;
  */
+//@Repository
 public interface UserDao extends JpaRepository<User, Long> {
 
 	User findByUserName(String username);
