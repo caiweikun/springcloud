@@ -6,6 +6,7 @@
 <p>4.整合Jpa</p>
 <p>5.整合Redis</p>
 <p>6.整合RabbitMQ</p>
+<p>7.整合ElasticSearch</p>
 <hr>
 <h3>工程 eureka</h3>
 <p>1.多Module工程</p>
