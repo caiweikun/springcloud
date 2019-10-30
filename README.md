@@ -33,7 +33,7 @@
 <p>17.使用 RabbitMQ 传输链路数据</p>
 <p>18.在 mysql 数据库中存储链路数据</p>
 <p>19.使用 ElasticSearch 存储链路数据</p>
-<p>20.使用 Kibana 展示链路数据</p>
+<p>20.使用 Kibana 展示ElasticSearch 中的链路数据</p>
 <p>21.微服务监控 Spring Boot Admin</p>
 <p>22.在Spring Boot Admin 中添加安全登录界面 </p>
 <hr>
